@@ -22,7 +22,8 @@
     "build": "tsc --build tsconfig.json",
     "postversion": "git push && git push --tags",
     "lint": "npx eslint . --ext .ts",
-    "format": "npx prettier --config .prettierrc src/**/*.ts --write"
+    "format": "npx prettier --config .prettierrc src/**/*.ts --write",
+    "prepublish": "npm run build"
   },
   "types": "dist/index.d.ts",
   "bin": {
