@@ -29,6 +29,10 @@
   "bin": {
     "cordova-update-config-enhanced": "dist/index.js"
   },
+  "main": "dist/index.js",
+  "files": [
+    "dist/*"
+  ],
   "dependencies": {
     "command-line-args": "^5.2.1",
     "command-line-usage": "^6.1.1",

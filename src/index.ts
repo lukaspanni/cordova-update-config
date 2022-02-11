@@ -100,7 +100,7 @@ const handleMetaOptions = (callArguments: commandLineArgs.CommandLineOptions): b
 
   if (callArguments['version']) {
     const pkg = require('../package.json');
-    console.log('cordova-update-config ' + pkg.version);
+    console.log(pkg.name + ' ' + pkg.version);
     return false;
   }
 
