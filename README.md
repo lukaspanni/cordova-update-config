@@ -12,11 +12,11 @@ Extends the original [cordova-update-config](https://github.com/crossroads/cordo
   npm i -g cordova-update-config-enhanced
 ```
 
-### Synopsis
+### Usage
 
 ```
-  cordova-update-config --appname org.company.app --appversion 5.3.223 ...
-  cordova-update-config --help
+  cordova-update-config-enhanced --appname org.company.app --appversion 5.3.223 ...
+  cordova-update-config-enhanced --help
 ```
 
 ### Options
