@@ -5,6 +5,7 @@ import commandLineArgs from 'command-line-args';
 import commandLineUsage from 'command-line-usage';
 const ConfigParser = require('cordova-common').ConfigParser;
 const CordovaError = require('cordova-common').CordovaError;
+const packageData = require('../package.json');
 
 const optionDefinitions = [
   {
@@ -99,8 +100,7 @@ const handleMetaOptions = (callArguments: commandLineArgs.CommandLineOptions): b
   }
 
   if (callArguments['version']) {
-    const pkg = require('../package.json');
-    console.log(pkg.name + ' ' + pkg.version);
+    console.log(packageData.name + ' ' + packageData.version);
     return false;
   }
 
