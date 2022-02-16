@@ -4,7 +4,6 @@ import fs from 'fs';
 import commandLineArgs from 'command-line-args';
 import commandLineUsage from 'command-line-usage';
 const ConfigParser = require('cordova-common').ConfigParser;
-const CordovaError = require('cordova-common').CordovaError;
 const packageData = require('../package.json');
 
 const optionDefinitions = [
@@ -54,6 +53,13 @@ const optionDefinitions = [
     name: 'androidversion',
     description: 'The android version code to set in config.xml. If empty the current version-Code will be incremented',
     type: String
+  },
+  {
+    name: 'configname',
+    description:
+      'Which config file to update. If not set all detected config files will be updated. To update only the main config (config.xml) use this option without providing a value',
+    alias: 'c',
+    type: String
   }
 ];
 
@@ -61,29 +67,48 @@ const main = (callArguments: commandLineArgs.CommandLineOptions): void => {
   const continueExecution = handleMetaOptions(callArguments);
   if (!continueExecution) return;
 
-  const configPath = getConfigPath(callArguments['file'], callArguments['projectRoot']);
-  const config = new ConfigParser(configPath);
+  const projectRoot = callArguments['root'] || getCordovaProjectRoot();
+  const configPaths = fs.readdirSync(projectRoot).filter((file) => file.startsWith('config') && file.endsWith('.xml'));
 
-  if (callArguments['appid']) config.setPackageName(callArguments['appid']);
-
-  if (callArguments['appname']) config.setName(callArguments['appname']);
-
-  if (callArguments['appversion']) config.setVersion(callArguments['appversion']);
-
-  if ('androidversion' in callArguments) {
-    const attributes = config.doc.getroot().attrib;
-    if (callArguments['androidversion'])
-      // set specific versionCode
-      attributes['android-versionCode'] = callArguments['androidversion'];
-    else {
-      // increment current versionCode if possible, else set versionCode to 1
-      let currentCode = Number(attributes['android-versionCode']);
-      if (isNaN(currentCode)) currentCode = 0;
-      attributes['android-versionCode'] = currentCode + 1;
-    }
+  const configFilename = buildConfigFilename(callArguments['configname']);
+  if (callArguments['configname'] != undefined && !configPaths.includes(configFilename)) {
+    console.error(`Config '${callArguments['configname']}' could not be found, aborting.`);
+    return;
   }
 
-  config.write();
+  const configParsers = configPaths
+    .filter(
+      (name) =>
+        callArguments['configname'] === undefined ||
+        (callArguments['configname'] === null && name === 'config.xml') ||
+        name === configFilename
+    )
+    .map((path) => new ConfigParser(path));
+
+  console.log(`Updating config[s]: ${configParsers.map((parser) => parser.path).join(', ')}`);
+
+  if (callArguments['appid']) configParsers.forEach((parser) => parser.setPackageName(callArguments['appid']));
+
+  if (callArguments['appname']) configParsers.forEach((parser) => parser.setName(callArguments['appname']));
+
+  if (callArguments['appversion']) configParsers.forEach((parser) => parser.setVersion(callArguments['appversion']));
+
+  if ('androidversion' in callArguments) {
+    configParsers.forEach((parser) => {
+      const attributes = parser.doc.getroot().attrib;
+      if (callArguments['androidversion'])
+        // set specific versionCode
+        attributes['android-versionCode'] = callArguments['androidversion'];
+      else {
+        // increment current versionCode if possible, else set versionCode to 1
+        let currentCode = Number(attributes['android-versionCode']);
+        if (isNaN(currentCode)) currentCode = 0;
+        attributes['android-versionCode'] = currentCode + 1;
+      }
+    });
+  }
+
+  configParsers.forEach((parser) => parser.write());
 };
 
 const handleMetaOptions = (callArguments: commandLineArgs.CommandLineOptions): boolean => {
@@ -107,19 +132,14 @@ const handleMetaOptions = (callArguments: commandLineArgs.CommandLineOptions): b
   return true;
 };
 
-const getConfigPath = (fileOption?: string, projectRootOption?: string): string => {
-  if (fileOption) return fileOption;
-
-  const projectRoot = projectRootOption || getCordovaProjectRoot();
-  if (!projectRoot) throw new CordovaError('Current working directory is not a Cordova-based project.');
-
-  return path.join(projectRoot, 'config.xml');
-};
-
 const getCordovaProjectRoot = (): string | undefined => {
   const projectDir = process.cwd();
   if (fs.existsSync(path.join(projectDir, 'config.xml'))) return projectDir;
   else return undefined;
+};
+
+const buildConfigFilename = (name: string): string => {
+  return 'config.' + name + '.xml';
 };
 
 const cliArgs = commandLineArgs(optionDefinitions);
