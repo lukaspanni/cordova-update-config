@@ -1,10 +1,12 @@
 # cordova-update-config-enhanced
 
-[![npm version](https://badge.fury.io/js/cordova-update-config-enhanced.svg)](https://badge.fury.io/js/cordova-update-config-enhanced)
+<a href="https://www.npmjs.com/package/cordova-update-config-enhanced"><img src="https://badgen.net/npm/v/cordova-update-config-enhanced" alt="Version"></a>
+<a href="https://www.npmjs.com/package/cordova-update-config-enhanced"><img src="https://badgen.net/npm/dt/cordova-update-config-enhanced" alt="Downloads"></a>
+<a href="https://www.npmjs.com/package/cordova-update-config-enhanced"><img src="https://badgen.net/npm/license/cordova-update-config-enhanced" alt="License"></a>
 
 A node command line tool to update cordova's config.xml, useful in continuous integration build environments.
 
-Extends the original [cordova-update-config](https://github.com/crossroads/cordova-update-config) and adds functionality to make this tool more useful.
+Extends the original [cordova-update-config](https://github.com/crossroads/cordova-update-config) and adds support  for multiple config-files and updating android-version-codes.
 
 ### Install
 
