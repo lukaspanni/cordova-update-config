@@ -1,3 +1,6 @@
+**Note**: as of 2024/02 this is project is no longer maintained but should keep working.
+Since I don't use cordova anymore and archived cordova-multiconfig, this package won't receive updates either.
+
 # cordova-update-config-enhanced
 
 <a href="https://www.npmjs.com/package/cordova-update-config-enhanced"><img src="https://badgen.net/npm/v/cordova-update-config-enhanced" alt="Version"></a>
